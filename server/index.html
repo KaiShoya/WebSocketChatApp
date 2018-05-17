@@ -1,0 +1,62 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>node.js chat</title>
+  <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <header></header>
+
+  <main>
+    <div class="input-group mb-3">
+      <input type="text" class="form-control" id="message" placeholder="" aria-label="" aria-describedby="basic-addon2">
+      <div class="input-group-append">
+        <button class="btn btn-outline-secondary" type="button" id="sendMessage">送信</button>
+      </div>
+    </div>
+    <div id="msg_list" height="100%">
+      <!-- <div class="msg-group">
+        <img src="https://pbs.twimg.com/profile_images/935777488520732673/fHqSKW61_400x400.jpg" alt="." class="rounded-circle user-icon">
+        <p class="rounded-right msg gray">テスト</p>
+      </div> -->
+    </div>
+  </main>
+
+  <footer></footer>
+
+  <!-- <script src="https://code.jquery.com/jquery-3.3.1.min.js" charset="utf-8"></script> -->
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+  <script src="assets/js/bootstrap.min.js" charset="utf-8"></script>
+  <script src="/socket.io/socket.io.js"></script>
+
+  <script type="text/javascript">
+    var s = io.connect('ws://localhost:3000' , {
+      'query': 'name=test_user&id=66666&email=shonari77@gmail.com'
+     });
+    // var s = io.connect(); //ローカル
+
+    //サーバから受け取るイベント
+    s.on("connect", function () {});  // 接続時
+    s.on("disconnect", function (client) {});  // 切断時
+    s.on("S_to_C_message", function (data) {
+      addMessage(data.value);
+    });
+
+    //クライアントからイベント送信（イベント名は自由に設定できます）
+    $("#sendMessage").on("click", function() {
+      var msg = $("#message").val(); //取得
+      s.emit("C_to_S_message", {value:msg}); //サーバへ送信
+      $("#message").val(""); //空白にする
+    });
+
+    //jqueryでメッセージを追加
+    function addMessage (value,color,size) {
+      var msg = value.replace( /[!@$%<>'"&|]/g, '' ); //タグ記号とかいくつか削除
+      $("#msg_list").append("<div class='msg'>" + msg + "</div>");
+    }
+  </script>
+</body>
+</html>
